@@ -81,84 +81,46 @@ f3 ns = case drop 277 ns of
 
 f4 :: [Maybe Int] -> (Int, [Maybe Int]) -- DO NOT CHANGE !
 f4 [] = (0, [])
-f4 xs =
-  case dropUntilOpcode xs of
-    [] -> (0, [])
-    (Just op : rest) ->
-      case opcodeInfo op of
-        Nothing -> (0, [])
-        Just (opType, operandMode, nMode) ->
-          case operandMode of
-            Fixed n -> processFixed opType n nMode rest
-            StopAt sv -> processStopAt opType sv nMode rest
-    _ -> (0, [])
+f4 (mi : mis) =
+  case mi of
+    Just 73 -> processFixed add 0 5 Term mis
+    Just 86 -> processFixed add 0 6 Skip mis
+    Just 93 -> processFixed add 0 4 (Default 1) mis
+    Just 17 -> processStop add 0 16 Term mis
+    Just 59 -> processStop add 0 13 Skip mis
+    Just 28 -> processStop add 0 15 (Default 8) mis
+    Just 36 -> processFixed mul 1 3 Term mis
+    Just 66 -> processFixed mul 1 6 Skip mis
+    Just 91 -> processFixed mul 1 4 (Default 1) mis
+    Just 76 -> processStop mul 1 16 Term mis
+    Just 97 -> processStop mul 1 15 Skip mis
+    Just 95 -> processStop mul 1 14 (Default 2) mis
+    _ -> f4 mis
 
-data OpType = OpAdd | OpMul
+data NothingAction = Term | Skip | Default Int
 
-data OperandMode = Fixed Int | StopAt Int
+processFixed :: (Int -> Int -> Int) -> Int -> Int -> NothingAction -> [Maybe Int] -> (Int, [Maybe Int])
+processFixed _ acc 0 _ rest = (acc, rest)
+processFixed _ acc _ _ [] = (acc, [])
+processFixed op acc n na (mi : mis) =
+  case mi of
+    Just x -> processFixed op (op acc x) (n - 1) na mis
+    Nothing -> case na of
+      Term -> (acc, mis)
+      Skip -> processFixed op acc n na mis
+      Default d -> processFixed op (op acc d) (n - 1) na mis
 
-data NothingMode = NTerm | NSkip | NDefault Int
-
-opcodeInfo :: Int -> Maybe (OpType, OperandMode, NothingMode)
-opcodeInfo n = case n of
-  73 -> Just (OpAdd, Fixed 5, NTerm)
-  86 -> Just (OpAdd, Fixed 6, NSkip)
-  93 -> Just (OpAdd, Fixed 4, NDefault 1)
-  17 -> Just (OpAdd, StopAt 16, NTerm)
-  59 -> Just (OpAdd, StopAt 13, NSkip)
-  28 -> Just (OpAdd, StopAt 15, NDefault 8)
-  36 -> Just (OpMul, Fixed 3, NTerm)
-  66 -> Just (OpMul, Fixed 6, NSkip)
-  91 -> Just (OpMul, Fixed 4, NDefault 1)
-  76 -> Just (OpMul, StopAt 16, NTerm)
-  97 -> Just (OpMul, StopAt 15, NSkip)
-  95 -> Just (OpMul, StopAt 14, NDefault 2)
-  _ -> Nothing
-
-isOpcode :: Int -> Bool
-isOpcode n = case opcodeInfo n of
-  Just _ -> True
-  Nothing -> False
-
-dropUntilOpcode :: [Maybe Int] -> [Maybe Int]
-dropUntilOpcode =
-  dropWhile
-    ( \m -> case m of
-        Just n -> not (isOpcode n)
-        Nothing -> True
-    )
-
-neutral :: OpType -> Int
-neutral OpAdd = 0
-neutral OpMul = 1
-
-combine :: OpType -> Int -> Int -> Int
-combine OpAdd = add
-combine OpMul = mul
-
-processFixed :: OpType -> Int -> NothingMode -> [Maybe Int] -> (Int, [Maybe Int])
-processFixed opType n nMode = go n (neutral opType)
-  where
-    go 0 acc rest = (acc, rest)
-    go k acc [] = (acc, [])
-    go k acc (y : ys) = case y of
-      Just v -> go (k - 1) (combine opType acc v) ys
-      Nothing -> case nMode of
-        NTerm -> (acc, ys)
-        NSkip -> go k acc ys
-        NDefault dv -> go (k - 1) (combine opType acc dv) ys
-
-processStopAt :: OpType -> Int -> NothingMode -> [Maybe Int] -> (Int, [Maybe Int])
-processStopAt opType stopVal nMode = go (neutral opType)
-  where
-    go acc [] = (acc, [])
-    go acc (y : ys) = case y of
-      Just v | v == stopVal -> (acc, ys)
-      Just v -> go (combine opType acc v) ys
-      Nothing -> case nMode of
-        NTerm -> (acc, ys)
-        NSkip -> go acc ys
-        NDefault dv -> go (combine opType acc dv) ys
+processStop :: (Int -> Int -> Int) -> Int -> Int -> NothingAction -> [Maybe Int] -> (Int, [Maybe Int])
+processStop _ acc _ _ [] = (acc, [])
+processStop op acc stopVal na (mi : mis) =
+  case mi of
+    Just x
+      | x == stopVal -> (acc, mis)
+      | otherwise -> processStop op (op acc x) stopVal na mis
+    Nothing -> case na of
+      Term -> (acc, mis)
+      Skip -> processStop op acc stopVal na mis
+      Default d -> processStop op (op acc d) stopVal na mis
 
 -- *** Q5 (3 marks)
 
@@ -170,11 +132,16 @@ processStopAt opType stopVal nMode = go (neutral opType)
 -- • f5 [42,2,X,6,24,2,6,2,2,99,2,4,6,2,99] = [2,7527168]
 -- I never claimed this mythical processor was perfect!
 f5 :: [Maybe Int] -> [Int] -- DO NOT CHANGE !
-f5 xs
-  | not (any isOp xs) = []
-  | otherwise =
-      let (r, rest) = f4 xs
-       in if null rest then [r] else r : f5 rest
+f5 l =
+  case dropWhile (not . isAnOpcode) l of
+    [] -> []
+    l' ->
+      let (r, rest) = f4 l'
+       in r : f5 rest
   where
-    isOp (Just n) = isOpcode n
-    isOp Nothing = False
+    isAnOpcode :: Maybe Int -> Bool
+    isAnOpcode (Just x) = x `elem` [73, 86, 93, 17, 59, 28, 36, 66, 91, 76, 97, 95]
+    isAnOpcode Nothing = False
+
+-- add extra material below here
+-- e.g.,  helper functions, test values, etc. ...
