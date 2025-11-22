@@ -1,0 +1,29 @@
+THEORY Length3
+
+IMPORT-HASKELL List
+
+THEOREM len3
+
+       length (10:20:30:[]) == 3
+
+STRATEGY ReduceAll
+
+length (10:(20:(30:[]))) == 3
+
+END ReduceLHS
+
+QED len3
+
+
+THEOREM repl3
+
+       replicate 3 42  == [42,42,42]
+
+STRATEGY ReduceAll
+
+replicate 3 42 == [42,42,42]
+
+END ReduceLHS
+
+QED repl3
+

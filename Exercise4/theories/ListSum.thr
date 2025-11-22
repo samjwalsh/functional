@@ -1,0 +1,62 @@
+THEORY ListSum
+
+IMPORT-THEORY Equality
+IMPORT-THEORY Arithmetic
+IMPORT-THEORY List
+IMPORT-HASKELL List
+
+THEOREM sum_list_catenation
+    sum (xs++ys)   ==   sum xs + sum ys
+
+STRATEGY Induction xs :: List
+
+    BASE []
+        sum ([]++ys)   ==   sum [] + sum ys
+
+    STRATEGY ReduceAll
+        sum ([]++ys)   ==   sum [] + sum ys
+        = DEF ++.1
+        sum ys   ==   sum [] + sum ys
+        = DEF sum.1 @ sum 2
+        sum ys   ==   0 + sum ys
+        = LAW add_left_unit l2r @ +
+        sum ys   ==   sum ys
+        = LAW eq_refl
+        True
+
+    END ReduceAll
+
+    END BASE
+
+    STEP (x:xs)
+
+    ASSUME
+      sum (xs++ys)   ==   sum xs + sum ys
+
+    SHOW
+      sum ((x:xs)++ys)   ==   sum (x:xs) + sum ys
+
+    STRATEGY ReduceAll
+
+        sum ((x:xs)++ys)   ==   sum (x:xs) + sum ys
+        = DEF ++.2 
+        sum (x:(xs++ys))   ==   sum (x:xs) + sum ys
+        = DEF sum.2 @ sum 2
+        sum (x:(xs++ys))   ==   (x + sum xs) + sum ys
+        = DEF sum.2 
+        x + sum (xs++ys)   ==   (x + sum xs) + sum ys
+        = LAW add_assoc r2l @ + 3
+        (x + sum (xs++ys))   ==   (x + (sum xs + sum ys))
+        = LAW add_left_cancel l2r
+        (sum (xs++ys))   ==   (sum xs + sum ys)
+        = INDHYP
+        True
+
+
+    END ReduceAll
+
+    END STEP
+
+END Induction 
+
+QED sum_list_catenation

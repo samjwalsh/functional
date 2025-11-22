@@ -1,0 +1,20 @@
+THEORY Sum2Lists
+
+IMPORT-THEORY Equality
+IMPORT-THEORY Arithmetic
+IMPORT-THEORY List
+IMPORT-HASKELL List
+
+THEOREM sum_lists_42_99
+
+    sum ((42:[])++(99:[]))  ==  sum (42:99:[]) + sum []
+
+STRATEGY ReduceAll
+
+
+  sum ((42:[])++(99:[]))  ==  sum (42:99:[]) + sum []
+
+  
+  END ReduceAll
+
+QED sum_lists_42_99

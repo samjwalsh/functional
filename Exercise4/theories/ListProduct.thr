@@ -1,0 +1,62 @@
+THEORY LProduct
+
+IMPORT-THEORY Equality
+IMPORT-THEORY Arithmetic
+IMPORT-THEORY List
+IMPORT-HASKELL List
+
+THEOREM prod_mul
+    product (xs++ys)   ==   product xs * product ys
+
+STRATEGY Induction xs :: List
+
+    BASE []
+        product ([]++ys)   ==   product [] * product ys
+
+    STRATEGY ReduceAll
+        product ([]++ys)   ==   product [] * product ys
+        = DEF ++.1
+        product ys  ==   product [] * product ys
+        = DEF product.1 @ product 2
+        product ys  ==  1 * product ys
+        = LAW mul_left_unit l2r @ *
+        product ys == product ys
+        = LAW eq_refl
+        True
+
+    END ReduceAll
+
+    END BASE
+
+    STEP (x:xs)
+
+    ASSUME
+      product (xs++ys)   ==   product xs * product ys
+
+    SHOW
+      product ((x:xs)++ys)   ==   product (x:xs) * product ys
+
+    STRATEGY ReduceAll
+
+        product ((x:xs)++ys)   ==   product (x:xs) * product ys
+        = DEF ++.2
+        product (x:(xs++ys))   ==   product (x:xs) * product ys
+        = DEF product.2 
+        x * product (xs++ys)   ==   product (x:xs) * product ys
+        = DEF product.2 @ product 2
+        x * product (xs++ys)   ==   (x * product xs) * product ys
+        = LAW mul_assoc r2l @ * 3
+        x * product (xs++ys)   ==   x * (product xs * product ys)
+        = INDHYP l2r @ product
+        x * (product xs * product ys)   ==   x * (product xs * product ys)
+        = LAW eq_refl
+        True
+        
+
+    END ReduceAll
+
+    END STEP
+
+END Induction 
+
+QED prod_mul

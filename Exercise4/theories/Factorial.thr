@@ -1,0 +1,151 @@
+THEORY Factorial
+
+IMPORT-HASKELL Factorial
+
+
+
+THEOREM iffac2
+    iffac 2 == 2
+
+    STRATEGY ReduceLHS
+
+      iffac 2
+    = DEF iffac
+      if 2 == 0 then 1 else (2 * iffac (2-1))
+    = SIMP
+      if False then 1 else (2 * iffac 1)
+    = IF 2
+      2 * iffac 1
+    = DEF iffac
+      2 * if 1==0 then 1 else 1 * iffac (1-1)
+    = SIMP
+      2 * if False then 1 else (1 * iffac 0)
+    = IF 2
+      2 * (1 * iffac 0)
+    = DEF iffac
+      2 * (1 * if 0==0 then 1 else 0 * iffac (0-1))
+    = SIMP
+      2 * (1 * if True then 1 else 0 * iffac (-1))
+    = IF 1
+      2 * (1 * 1)
+    = SIMP
+      2
+
+    END ReduceLHS
+     
+QED iffac2
+
+
+
+THEOREM gfac2
+    gfac 2 == 2
+
+    STRATEGY ReduceLHS
+
+      gfac 2
+    = DEF gfac
+      case "guarded-if" of
+        _ | 2 == 0     ->  1
+          | True  ->  2 * gfac (2-1)
+    = SIMP
+      case "guarded-if" of
+        _ | False     ->  1
+          | True  ->  2 * gfac 1
+    = GRDIF 2
+      2 * gfac 1
+    = DEF gfac
+      2 * ( case "guarded-if" of
+              _ | 1 == 0     ->  1
+                | True  ->  1 * gfac (1-1) )
+    = SIMP
+      2 * ( case "guarded-if" of
+              _ | False     ->  1
+                | True  ->  1 * gfac 0 )
+    = GRDIF 2
+      2 * (1 * gfac 0)
+    = DEF gfac
+      2 * (1 * (case "guarded-if" of
+                  _ | 0 == 0     ->  1
+                    | True  ->  0 * gfac (0-1)))
+    = SIMP
+      2 * (1 * (case "guarded-if" of
+                  _ | True     ->  1
+                    | True  ->  0 * gfac (-1)))
+    = GRDIF 1
+      2 * (1 * 1)
+    = SIMP
+      2
+
+    END ReduceLHS
+     
+QED gfac2
+
+
+THEOREM ofac2
+    ofac 2 == 2
+
+    STRATEGY ReduceLHS
+
+      ofac 2
+    = DEF ofac
+      case "guarded-if" of
+        _ | 2 == 0     ->  1
+          | otherwise  ->  2 * ofac (2-1)
+    = SIMP
+      case "guarded-if" of
+        _ | False     ->  1
+          | otherwise  ->  2 * ofac 1
+    = GRDIF 2
+      2 * ofac 1
+    = DEF ofac
+      2 * ( case "guarded-if" of
+              _ | 1 == 0     ->  1
+                | otherwise  ->  1 * ofac (1-1) )
+    = SIMP
+      2 * ( case "guarded-if" of
+              _ | False     ->  1
+                | otherwise  ->  1 * ofac 0 )
+    = GRDIF 2
+      2 * (1 * ofac 0)
+    = DEF ofac
+      2 * (1 * (case "guarded-if" of
+                  _ | 0 == 0     ->  1
+                    | otherwise  ->  0 * ofac (0-1)))
+    = SIMP
+      2 * (1 * (case "guarded-if" of
+                  _ | True     ->  1
+                    | otherwise  ->  0 * ofac (-1)))
+    = GRDIF 1
+      2 * (1 * 1)
+    = SIMP
+      2
+
+    END ReduceLHS
+     
+QED ofac2
+
+
+
+THEOREM pfac2
+    pfac 2 == 2
+
+    STRATEGY ReduceLHS
+
+      pfac 2
+    = DEF pfac.2
+      2 * pfac (2-1)
+    = SIMP
+      2 * pfac 1
+    = DEF pfac.2
+      2 * (1 * pfac (1-1))
+    = SIMP
+      2 * (1 * pfac 0)
+    = DEF pfac.1
+      2 * (1 * 1)
+    = SIMP
+      2
+
+    END ReduceLHS
+     
+QED pfac2
+

@@ -1,0 +1,54 @@
+THEORY Length3
+
+IMPORT-HASKELL List
+
+THEOREM len3
+
+       length (10:20:30:[]) == 3
+
+STRATEGY ReduceLHS
+
+length (10:(20:(30:[])))
+ = DEF length.2
+1 + length (20:(30:[]))
+ = DEF length.2
+1 + (1 + length (30:[]))
+ = DEF length.2
+1 + (1 + (1 + length []))
+ = DEF length
+1 + (1 + (1 + 0))
+ = SIMP
+3
+
+END ReduceLHS
+
+QED len3
+
+
+THEOREM repl3
+
+       replicate 3 42  == [42,42,42]
+
+STRATEGY ReduceLHS
+
+replicate 3 42
+ = DEF replicate.2
+42 : replicate (3-1) 42
+ = SIMP
+42 : replicate 2 42
+ = DEF replicate.2
+42 : 42 : replicate (2-1) 42
+ = SIMP
+42 : 42 : replicate 1 42
+ = DEF replicate.2
+42 : 42 : 42 : replicate (1-1) 42
+ = SIMP
+42 : 42 : 42 : replicate 0 42
+ = DEF replicate.1
+42 : 42 : 42 : []
+
+
+END ReduceLHS
+
+QED repl3
+

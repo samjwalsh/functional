@@ -10,11 +10,31 @@ THEOREM ex4q2
 
    rec2ursFunc 18 == 37
 
-STRATEGY ReduceAll
+STRATEGY ReduceLHS
 
-  2+2 == 5
+   rec2ursFunc 18
+   = DEF rec2ursFunc
+   if 18 <= 8 then 6 else 18 + rec2ursFunc (18 - 5)
+   = SIMP
+   if False then 6 else 18 + rec2ursFunc 13
+   = IF 2
+   18 + rec2ursFunc 13
+   = DEF rec2ursFunc
+   18 + (if 13 <= 8 then 6 else 13 + rec2ursFunc (13 - 5))
+   = SIMP
+   18 + (if False then 6 else 13 + rec2ursFunc 8)
+   = IF 2
+   18 + (13 + rec2ursFunc 8)
+   = DEF rec2ursFunc
+   18 + (13 + (if 8 <= 8 then 6 else 8 + rec2ursFunc (8 - 5)))
+   = SIMP
+   18 + (13 + (if True then 6 else 8 + rec2ursFunc 3))
+   = IF 1
+   18 + (13 + 6)
+   = SIMP
+   37
 
-END ReduceAll
+END ReduceLHS
 
 QED ex4q2
 

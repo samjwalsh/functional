@@ -1,0 +1,17 @@
+THEORY List
+
+INDUCTION-SCHEME List
+BASE []
+STEP xs --> (x:xs)
+INJ  ( x == y && xs == ys )  ==  ( (x:xs) == (y:ys) )
+
+LAW cat_assoc  xs ++ (ys ++ zs) == (xs ++ ys) ++ xs
+LAW rev_rev   reverse (reverse xs) == xs
+LAW rev_cat   reverse (xs ++ ys) == reverse xs ++ reverse ys
+
+LAW len_cat   length (xs ++ ys) == length xs + length ys
+LAW sum_cat   sum (xs++ys) == sum xs + sum ys
+LAW prd_cat   product (xs++ys) == product xs * product ys
+
+LAW cat_rpl   (replicate m x) ++ (replicate n x)  == replicate (m+n)  x
+LAW len_rpl   length (replicate n x) == n

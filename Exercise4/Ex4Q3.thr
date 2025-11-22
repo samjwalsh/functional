@@ -8,11 +8,19 @@ IMPORT-HASKELL Ex4
 
 THEOREM ex4q3
 
-   c0ompute xs == 2 + 17*(len xs) + sum xs
+  c0ompute [] == 2 + 17*(len []) + sum []
 
 STRATEGY ReduceAll
 
-  2+2 == 5
+  c0ompute [] == 2 + 17*(len []) + sum []
+  = DEF c0ompute.1
+  2 == 2 + 17*(len []) + sum []
+  = DEF len.1 @ len
+  2 == 2 + 17*0 + sum []
+  = DEF sum.1 @ sum
+  2 == 2 + 17*0 + 0
+  = SIMP
+  True
 
 END ReduceAll
 
