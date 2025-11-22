@@ -33,14 +33,47 @@ find s ((t, f) : d)
 -- This will only be graded using dictionaries and values that do
 -- not result in runtime errors in a correct implementation.
 eval :: Dict -> MathExp6r -> Float
-eval _ _ = error "Ex3Q1: eval not yet defined"
+eval d (LitNum f) = f
+eval d (Ident s) = case find s d of
+  Just val -> val
+  Nothing -> error ("Undefined variable: " ++ s)
+eval d (Div e1 e2) = eval d e1 / eval d e2
+eval d (Sum e1 e2) = eval d e1 + eval d e2
+eval d (AddInv e) = -(eval d e)
+eval d (Not e) = if eval d e == 0.0 then 1.0 else 0.0
+eval d (GrtOrEq e1 e2) = if eval d e1 >= eval d e2 then 1.0 else 0.0
+eval d (EqToZero e) = if eval d e == 0.0 then 1.0 else 0.0
 
 -- Q2 (9 marks)
 -- Implement the following function (which always returns a value)
 -- Grading of this will put emphasis on cases that would cause a
 -- runtime error for Q1.
 meval :: Dict -> MathExp6r -> Maybe Float
-meval _ _ = error "Ex3Q2: meval not yet defined"
+meval d (LitNum f) = Just f
+meval d (Ident s) = find s d
+meval d (Div e1 e2) = do
+  v1 <- meval d e1
+  v2 <- meval d e2
+  if v2 == 0.0
+    then Nothing
+    else Just (v1 / v2)
+meval d (Sum e1 e2) = do
+  v1 <- meval d e1
+  v2 <- meval d e2
+  Just (v1 + v2)
+meval d (AddInv e) = do
+  v <- meval d e
+  Just (-v)
+meval d (Not e) = do
+  v <- meval d e
+  Just (if v == 0.0 then 1.0 else 0.0)
+meval d (GrtOrEq e1 e2) = do
+  v1 <- meval d e1
+  v2 <- meval d e2
+  Just (if v1 >= v2 then 1.0 else 0.0)
+meval d (EqToZero e) = do
+  v <- meval d e
+  Just (if v == 0.0 then 1.0 else 0.0)
 
 -- Q3 (8 marks)
 -- Laws of Arithmetic for this question:
@@ -49,7 +82,19 @@ meval _ _ = error "Ex3Q2: meval not yet defined"
 -- The following function should implement simplifications
 -- using ONLY the above two laws, wherever they apply.
 simp :: MathExp6r -> MathExp6r
-simp _ = error "Ex3Q3: simp not yet defined"
+simp (Sum e1 e2) =
+  let s1 = simp e1
+      s2 = simp e2
+   in case (s1, s2) of
+        (LitNum 0.0, e) -> e
+        (e, LitNum 0.0) -> e
+        (se1, se2) -> Sum se1 se2
+simp (Div e1 e2) = Div (simp e1) (simp e2)
+simp (AddInv e) = AddInv (simp e)
+simp (Not e) = Not (simp e)
+simp (GrtOrEq e1 e2) = GrtOrEq (simp e1) (simp e2)
+simp (EqToZero e) = EqToZero (simp e)
+simp e = e -- Base cases for LitNum and Ident
 
 -- add extra material below here
 -- e.g.,  helper functions, test values, etc. ...

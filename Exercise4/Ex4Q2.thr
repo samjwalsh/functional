@@ -1,0 +1,20 @@
+THEORY Ex4Q2
+IMPORT-THEORY Equality
+IMPORT-THEORY Boolean
+IMPORT-THEORY Arithmetic
+IMPORT-THEORY List
+IMPORT-HASKELL List
+IMPORT-HASKELL Ex4
+
+THEOREM ex4q2
+
+   rec2ursFunc 18 == 37
+
+STRATEGY ReduceAll
+
+  2+2 == 5
+
+END ReduceAll
+
+QED ex4q2
+
