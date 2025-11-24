@@ -10,11 +10,97 @@ THEOREM ex4q4
 
    d3oubling (x+1) > d3oubling x
 
-STRATEGY ReduceAll
+STRATEGY CaseSplit Plus1Order
 
-  2+2 == 5
+CASE 1 (x < 4)
+SHOW
+   d3oubling (x+1) > d3oubling x
 
-END ReduceAll
+   STRATEGY ReduceAll
+
+   d3oubling (x+1) > d3oubling x
+   = DEF d3oubling
+   (if (x + 1) < 5 then 2 * (x + 1) else 2 * (x + 1) - 1) > d3oubling x
+   = SIMP
+   2 * (x + 1) > d3oubling x
+   = DEF d3oubling
+   2 * (x + 1) > (if x < 5 then 2 * x else 2 * x - 1)
+   = SIMP
+   2 * (x + 1) > 2 * x
+   = SIMP
+   True
+
+   END ReduceAll
+
+END CASE 1
+
+CASE 2 (x == 4)
+SHOW
+   d3oubling (x+1) > d3oubling x
+
+   STRATEGY ReduceAll
+
+   d3oubling (x+1) > d3oubling x
+   = DEF d3oubling
+   (if (x + 1) < 5 then 2 * (x + 1) else 2 * (x + 1) - 1) > d3oubling x
+   = SIMP
+   (2 * (x + 1) - 1) > d3oubling x
+   = DEF d3oubling
+   (2 * (x + 1) - 1) > (if x < 5 then 2 * x else 2 * x - 1)
+   = SIMP
+   (2 * (x + 1) - 1) > 2 * x
+   = SIMP
+   True
+
+   END ReduceAll
+
+END CASE 2
+
+CASE 3 (x == 5)
+SHOW
+   d3oubling (x+1) > d3oubling x
+
+   STRATEGY ReduceAll
+
+   d3oubling (x+1) > d3oubling x
+   = DEF d3oubling
+   (if (x + 1) < 5 then 2 * (x + 1) else 2 * (x + 1) - 1) > d3oubling x
+   = SIMP
+   (2 * (x + 1) - 1) > d3oubling x
+   = DEF d3oubling
+   (2 * (x + 1) - 1) > (if x < 5 then 2 * x else 2 * x - 1)
+   = SIMP
+   (2 * (x + 1) - 1) > (2 * x - 1)
+   = SIMP
+   True
+
+   END ReduceAll
+
+END CASE 3
+
+CASE 4 (x > 5)
+SHOW
+   d3oubling (x+1) > d3oubling x
+
+   STRATEGY ReduceAll
+
+   d3oubling (x+1) > d3oubling x
+   = DEF d3oubling
+   (if (x + 1) < 5 then 2 * (x + 1) else 2 * (x + 1) - 1) > d3oubling x
+   = SIMP
+   (2 * (x + 1) - 1) > d3oubling x
+   = DEF d3oubling
+   (2 * (x + 1) - 1) > (if x < 5 then 2 * x else 2 * x - 1)
+   = SIMP
+   (2 * (x + 1) - 1) > (2 * x - 1)
+   = SIMP
+   True
+
+   END ReduceAll
+
+END CASE 4
+
+END CaseSplit
 
 QED ex4q4
 
