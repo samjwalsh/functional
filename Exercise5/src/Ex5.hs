@@ -96,19 +96,19 @@ dofold (op, z) = foldR z op
 
 -- dofold lenTuple = len
 lenTuple :: (Int -> Int -> Int, Int)
-lenTuple = (undefined, undefined)
+lenTuple = (incsnd, 0)
 
 -- dofold sumupTuple = sumup
 sumupTuple :: (Int -> Int -> Int, Int)
-sumupTuple = (undefined, undefined)
+sumupTuple = ((+), 0)
 
 -- dofold prodTuple = prod
 prodTuple :: (Int -> Int -> Int, Int)
-prodTuple = (undefined, undefined)
+prodTuple = ((*), 1)
 
 -- dofold catTuple = cat
 catTuple :: ([Thing] -> [Thing] -> [Thing], [Thing])
-catTuple = (undefined, undefined)
+catTuple = ((++), [])
 
 -- Q3 (14 marks)
 -- Q3 requires you to modify and submit Main.hs
