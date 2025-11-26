@@ -1,0 +1,1 @@
+A tailored Spec.hs will be written in here
