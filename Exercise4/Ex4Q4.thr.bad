@@ -1,0 +1,146 @@
+THEORY Ex4Q4
+IMPORT-THEORY Equality
+IMPORT-THEORY Boolean
+IMPORT-THEORY Arithmetic
+IMPORT-THEORY List
+IMPORT-HASKELL List
+IMPORT-HASKELL Ex4
+
+THEOREM ex4q4
+
+   d3oubling (x+1) > d3oubling x
+
+STRATEGY CaseSplit Guards
+
+    CASE 1  ((x+1) < 5)
+
+        SHOW
+            d3oubling (x+1) > d3oubling x
+
+        STRATEGY ReduceAll
+
+            d3oubling (x+1) > d3oubling x
+          = DEF d3oubling @ d3oubling 1
+            (case "guarded-if" of
+              _ | (x+1) < 5   ->  2*(x+1)
+                | (x+1) >= 5  ->  2*(x+1)-1) > d3oubling x
+          = CASEP Guards 1 @ < 1
+            (case "guarded-if" of
+              _ | True   ->  2*(x+1)
+                | (x+1) >= 5  ->  2*(x+1)-1) > d3oubling x
+          = GRDIF 1 @ guarded-if 1
+            (2*(x+1)) > d3oubling x
+          = DEF d3oubling @ d3oubling
+            (2*(x+1)) >
+            (case "guarded-if" of
+              _ | x < 5   ->  2*x
+                | x >= 5  ->  2*x-1)
+          = SIMP @ >
+            (2*(x+1)) > (2*x)
+          = SIMP
+            True
+
+        END ReduceAll
+
+    END CASE 1
+
+    CASE 2  ((x+1) >= 5)
+
+        SHOW
+            d3oubling (x+1) > d3oubling x
+
+        STRATEGY CaseSplit InnerGuard
+
+            CASE 1  (x < 5)
+
+                SHOW
+                    d3oubling (x+1) > d3oubling x
+
+                STRATEGY ReduceAll
+
+                    d3oubling (x+1) > d3oubling x
+                  = DEF d3oubling @ d3oubling 1
+                    (case "guarded-if" of
+                      _ | (x+1) < 5   ->  2*(x+1)
+                        | (x+1) >= 5  ->  2*(x+1)-1) > d3oubling x
+                  = CASEP Guards 2 @ >= 1
+                    (case "guarded-if" of
+                      _ | (x+1) < 5   ->  2*(x+1)
+                        | True  ->  2*(x+1)-1) > d3oubling x
+                  = GRDIF 2 @ guarded-if 1
+                    (2*(x+1)-1) > d3oubling x
+                  = DEF d3oubling @ d3oubling
+                    (2*(x+1)-1) >
+                    (case "guarded-if" of
+                      _ | x < 5   ->  2*x
+                        | x >= 5  ->  2*x-1)
+                  = CASEP InnerGuard 1 @ < 1
+                    (2*(x+1)-1) >
+                    (case "guarded-if" of
+                      _ | True   ->  2*x
+                        | x >= 5  ->  2*x-1)
+                  = GRDIF 1 @ guarded-if
+                    (2*(x+1)-1) > (2*x)
+                  = SIMP
+                    True
+
+                END ReduceAll
+
+            END CASE 1
+
+            CASE 2  (x >= 5)
+
+                SHOW
+                    d3oubling (x+1) > d3oubling x
+
+                STRATEGY ReduceAll
+
+                    d3oubling (x+1) > d3oubling x
+                  = DEF d3oubling @ d3oubling 1
+                    (case "guarded-if" of
+                      _ | (x+1) < 5   ->  2*(x+1)
+                        | (x+1) >= 5  ->  2*(x+1)-1) > d3oubling x
+                  = CASEP Guards 2 @ >= 1
+                    (case "guarded-if" of
+                      _ | (x+1) < 5   ->  2*(x+1)
+                        | True  ->  2*(x+1)-1) > d3oubling x
+                  = GRDIF 2 @ guarded-if 1
+                    (2*(x+1)-1) > d3oubling x
+                  = DEF d3oubling @ d3oubling
+                    (2*(x+1)-1) >
+                    (case "guarded-if" of
+                      _ | x < 5   ->  2*x
+                        | x >= 5  ->  2*x-1)
+                  = CASEP InnerGuard 2 @ >= 1
+                    (2*(x+1)-1) >
+                    (case "guarded-if" of
+                      _ | x < 5   ->  2*x
+                        | True  ->  2*x-1)
+                  = GRDIF 2 @ guarded-if
+                    (2*(x+1)-1) > (2*x-1)
+                  = SIMP
+                    True
+
+                END ReduceAll
+
+            END CASE 2
+
+        END CaseSplit
+
+    END CASE 2
+
+END CaseSplit
+
+QED ex4q4
+
+CASE-SCHEME Guards
+CASE 1  ((x+1) < 5)
+CASE 2  ((x+1) >= 5)
+EXHAUSTIVE ((x+1) < 5) || ((x+1) >= 5)
+EXCLUSIVE 1 2  not(((x+1) < 5) && ((x+1) >= 5))
+
+CASE-SCHEME InnerGuard
+CASE 1  (x < 5)
+CASE 2  (x >= 5)
+EXHAUSTIVE (x < 5) || (x >= 5)
+EXCLUSIVE 1 2  not((x < 5) && (x >= 5))

@@ -10,109 +10,164 @@ THEOREM ex4q4
 
    d3oubling (x+1) > d3oubling x
 
-STRATEGY CaseSplit Plus1Order
+STRATEGY CaseSplit XLt5
 
-CASE 1 (x < 4)
-SHOW
-   d3oubling (x+1) > d3oubling x
+    CASE 1  (x < 5)
 
-   STRATEGY ReduceAll
+        SHOW
+            d3oubling (x+1) > d3oubling x
 
-   d3oubling (x+1) > d3oubling x
-   = DEF d3oubling
-   (if (x + 1) < 5 then 2 * (x + 1) else 2 * (x + 1) - 1) > d3oubling x
-   = SIMP
-   2 * (x + 1) > d3oubling x
-   = DEF d3oubling
-   2 * (x + 1) > (if x < 5 then 2 * x else 2 * x - 1)
-   = SIMP
-   2 * (x + 1) > 2 * x
-   = SIMP
-   True
+        STRATEGY CaseSplit Xp1Lt5
 
-   END ReduceAll
+            CASE 1  ((x+1) < 5)
 
-END CASE 1
+                SHOW
+                    d3oubling (x+1) > d3oubling x
 
-CASE 2 (x == 4)
-SHOW
-   d3oubling (x+1) > d3oubling x
+                STRATEGY ReduceAll
 
-   STRATEGY ReduceAll
+                    d3oubling (x+1) > d3oubling x
+                  = DEF d3oubling @ d3oubling 1
+                    (case "guarded-if" of
+                      _ | (x+1) < 5   ->  2*(x+1)
+                        | (x+1) >= 5  ->  2*(x+1)-1) > d3oubling x
+                  = DEF d3oubling @ d3oubling
+                    (case "guarded-if" of
+                      _ | (x+1) < 5   ->  2*(x+1)
+                        | (x+1) >= 5  ->  2*(x+1)-1) >
+                    (case "guarded-if" of
+                      _ | x < 5   ->  2*x
+                        | x >= 5  ->  2*x-1)
+                  = CASEP Xp1Lt5 1 @ < 1
+                    (case "guarded-if" of
+                      _ | True   ->  2*(x+1)
+                        | (x+1) >= 5  ->  2*(x+1)-1) >
+                    (case "guarded-if" of
+                      _ | x < 5   ->  2*x
+                        | x >= 5  ->  2*x-1)
+                  = GRDIF 1 @ guarded-if 1
+                    (2*(x+1)) >
+                    (case "guarded-if" of
+                      _ | x < 5   ->  2*x
+                        | x >= 5  ->  2*x-1)
+                  = SIMP @ < 1
+                    (2*(x+1)) >
+                    (case "guarded-if" of
+                      _ | True   ->  2*x
+                        | x >= 5  ->  2*x-1)
+                  = GRDIF 1 @ guarded-if
+                    (2*(x+1)) > (2*x)
+                  = SIMP
+                    True
 
-   d3oubling (x+1) > d3oubling x
-   = DEF d3oubling
-   (if (x + 1) < 5 then 2 * (x + 1) else 2 * (x + 1) - 1) > d3oubling x
-   = SIMP
-   (2 * (x + 1) - 1) > d3oubling x
-   = DEF d3oubling
-   (2 * (x + 1) - 1) > (if x < 5 then 2 * x else 2 * x - 1)
-   = SIMP
-   (2 * (x + 1) - 1) > 2 * x
-   = SIMP
-   True
+                END ReduceAll
 
-   END ReduceAll
+            END CASE 1
 
-END CASE 2
+            CASE 2  ((x+1) >= 5)
 
-CASE 3 (x == 5)
-SHOW
-   d3oubling (x+1) > d3oubling x
+                SHOW
+                    d3oubling (x+1) > d3oubling x
 
-   STRATEGY ReduceAll
+                STRATEGY ReduceAll
 
-   d3oubling (x+1) > d3oubling x
-   = DEF d3oubling
-   (if (x + 1) < 5 then 2 * (x + 1) else 2 * (x + 1) - 1) > d3oubling x
-   = SIMP
-   (2 * (x + 1) - 1) > d3oubling x
-   = DEF d3oubling
-   (2 * (x + 1) - 1) > (if x < 5 then 2 * x else 2 * x - 1)
-   = SIMP
-   (2 * (x + 1) - 1) > (2 * x - 1)
-   = SIMP
-   True
+                    d3oubling (x+1) > d3oubling x
+                  = DEF d3oubling @ d3oubling 1
+                    (case "guarded-if" of
+                      _ | (x+1) < 5   ->  2*(x+1)
+                        | (x+1) >= 5  ->  2*(x+1)-1) > d3oubling x
+                  = DEF d3oubling @ d3oubling
+                    (case "guarded-if" of
+                      _ | (x+1) < 5   ->  2*(x+1)
+                        | (x+1) >= 5  ->  2*(x+1)-1) >
+                    (case "guarded-if" of
+                      _ | x < 5   ->  2*x
+                        | x >= 5  ->  2*x-1)
+                  = CASEP Xp1Lt5 2 @ >= 1
+                    (case "guarded-if" of
+                      _ | (x+1) < 5   ->  2*(x+1)
+                        | True  ->  2*(x+1)-1) >
+                    (case "guarded-if" of
+                      _ | x < 5   ->  2*x
+                        | x >= 5  ->  2*x-1)
+                  = GRDIF 2 @ guarded-if 1
+                    (2*(x+1)-1) >
+                    (case "guarded-if" of
+                      _ | x < 5   ->  2*x
+                        | x >= 5  ->  2*x-1)
+                  = SIMP @ < 1
+                    (2*(x+1)-1) >
+                    (case "guarded-if" of
+                      _ | True   ->  2*x
+                        | x >= 5  ->  2*x-1)
+                  = GRDIF 1 @ guarded-if
+                    (2*(x+1)-1) > (2*x)
+                  = SIMP
+                    True
 
-   END ReduceAll
+                END ReduceAll
 
-END CASE 3
+            END CASE 2
 
-CASE 4 (x > 5)
-SHOW
-   d3oubling (x+1) > d3oubling x
+        END CaseSplit
 
-   STRATEGY ReduceAll
+    END CASE 1
 
-   d3oubling (x+1) > d3oubling x
-   = DEF d3oubling
-   (if (x + 1) < 5 then 2 * (x + 1) else 2 * (x + 1) - 1) > d3oubling x
-   = SIMP
-   (2 * (x + 1) - 1) > d3oubling x
-   = DEF d3oubling
-   (2 * (x + 1) - 1) > (if x < 5 then 2 * x else 2 * x - 1)
-   = SIMP
-   (2 * (x + 1) - 1) > (2 * x - 1)
-   = SIMP
-   True
+    CASE 2  (x >= 5)
 
-   END ReduceAll
+        SHOW
+            d3oubling (x+1) > d3oubling x
 
-END CASE 4
+        STRATEGY ReduceAll
+
+            d3oubling (x+1) > d3oubling x
+          = DEF d3oubling @ d3oubling 1
+            (case "guarded-if" of
+              _ | (x+1) < 5   ->  2*(x+1)
+                | (x+1) >= 5  ->  2*(x+1)-1) > d3oubling x
+          = DEF d3oubling @ d3oubling
+            (case "guarded-if" of
+              _ | (x+1) < 5   ->  2*(x+1)
+                | (x+1) >= 5  ->  2*(x+1)-1) >
+            (case "guarded-if" of
+              _ | x < 5   ->  2*x
+                | x >= 5  ->  2*x-1)
+          = CASEP XLt5 2 @ >= 2
+            (case "guarded-if" of
+              _ | (x+1) < 5   ->  2*(x+1)
+                | (x+1) >= 5  ->  2*(x+1)-1) >
+            (case "guarded-if" of
+              _ | x < 5   ->  2*x
+                | True  ->  2*x-1)
+          = GRDIF 2 @ guarded-if 2
+            (case "guarded-if" of
+              _ | (x+1) < 5   ->  2*(x+1)
+                | (x+1) >= 5  ->  2*(x+1)-1) > (2*x-1)
+          = SIMP @ >= 1
+            (case "guarded-if" of
+              _ | (x+1) < 5   ->  2*(x+1)
+                | True  ->  2*(x+1)-1) > (2*x-1)
+          = GRDIF 2 @ guarded-if
+            (2*(x+1)-1) > (2*x-1)
+          = SIMP
+            True
+
+        END ReduceAll
+
+    END CASE 2
 
 END CaseSplit
 
 QED ex4q4
 
-CASE-SCHEME Plus1Order
-CASE 1  (x <  4)
-CASE 2  (x == 4)
-CASE 3  (x == 5)
-CASE 4  (x >  5)
-EXHAUSTIVE (x <  4) || (x == 4) || (x == 5) || (x >  5)
-EXCLUSIVE 1 2  not((x <  4) && (x == 4))
-EXCLUSIVE 1 3  not((x <  4) && (x == 5))
-EXCLUSIVE 1 4  not((x <  4) && (x >  5))
-EXCLUSIVE 2 3  not((x == 4) && (x == 5))
-EXCLUSIVE 2 4  not((x == 4) && (x >  5))
-EXCLUSIVE 3 4  not((x == 5) && (x >  5))
+CASE-SCHEME XLt5
+CASE 1  (x < 5)
+CASE 2  (x >= 5)
+EXHAUSTIVE (x < 5) || (x >= 5)
+EXCLUSIVE 1 2  not((x < 5) && (x >= 5))
+
+CASE-SCHEME Xp1Lt5
+CASE 1  ((x+1) < 5)
+CASE 2  ((x+1) >= 5)
+EXHAUSTIVE ((x+1) < 5) || ((x+1) >= 5)
+EXCLUSIVE 1 2  not(((x+1) < 5) && ((x+1) >= 5))
