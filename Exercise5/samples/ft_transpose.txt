@@ -1,3 +1,1 @@
-[[Just 1,Nothing,Just 4,Just 5,Just 9]
-,[Just 2,Nothing,Just 3,Nothing,Just 5]
-,[Just 3,Nothing,Just 8,Nothing,Just 3]]
+[[Just 1,Nothing,Just 4,Just 5,Just 9],[Just 2,Nothing,Just 3,Nothing,Just 5],[Just 3,Nothing,Just 8,Nothing,Just 3]]
