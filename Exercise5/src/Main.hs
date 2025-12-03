@@ -5,11 +5,7 @@ import Ex5
 
 main :: IO ()
 main = do
-  putStrLn "Running Exercise5."
-  putStrLn ""
-
   task1
-
   task2
 
 task1 :: IO ()
