@@ -1,0 +1,30 @@
+THEORY Ex5Q2
+IMPORT-THEORY Equality
+IMPORT-THEORY Boolean
+IMPORT-THEORY Arithmetic
+IMPORT-THEORY List
+IMPORT-HASKELL List
+IMPORT-HASKELL Ex5
+THEOREM ex5q2
+   frec 23 == 42
+
+STRATEGY ReduceLHS
+  frec 23
+  = DEF frec.1
+  if 23 <= 7 then 4 else 23 + frec (23 - 8)
+  = DEF frec.1
+  if 23 <= 7 then 4 else 23 + (if 23-8 <= 7 then 4 else 23-8 + frec(23-8-8))
+  = DEF frec.1
+  if 23 <= 7 then 4 else 23 + (if 23-8 <= 7 then 4 else 23-8 + (if 23-8-8 <= 7 then 4 else 23-8-8+frec(23-8-8-8)))
+  = SIMP
+  if False then 4 else 23 + (if False then 4 else 15 + (if True then 4 else 7+frec(-1)))
+  = IF 2
+  23 + (if False then 4 else 15 + (if True then 4 else 7+frec(-1)))
+  = IF 2
+  23 + (15 + (if True then 4 else 7 + frec(-1)))
+  = IF 1
+  23 + (15 + 4)
+  = SIMP
+  42
+END ReduceLHS
+QED ex5q2

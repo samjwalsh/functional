@@ -1,0 +1,55 @@
+THEORY Ex5Q3
+IMPORT-THEORY Equality
+IMPORT-THEORY Boolean
+IMPORT-THEORY Arithmetic
+IMPORT-THEORY List
+IMPORT-HASKELL List
+IMPORT-HASKELL Ex5
+THEOREM ex5q3
+   bonus xs == 6 + 3*(len xs) + sum xs
+
+STRATEGY Induction xs :: List
+    BASE []
+        bonus [] == 6 + 3*(len []) + sum []
+
+    STRATEGY ReduceAll
+        bonus [] == 6 + 3*(len []) + sum []
+        = DEF sum.1
+        bonus [] == 6 + 3*(len []) + 0
+        = DEF len.1
+        bonus [] == 6 + 3*0 + 0
+        = DEF bonus.1
+        6 == 6 + 3*0 + 0
+        = SIMP
+        True
+    END ReduceAll
+    END BASE
+    STEP (x:xs)
+        ASSUME
+          bonus xs == 6 + 3*(len xs) + sum xs
+
+        SHOW
+          bonus (x:xs) == 6 + 3*(len (x:xs)) + sum (x:xs)
+
+        STRATEGY ReduceAll
+            bonus (x:xs) == 6 + 3*(len (x:xs)) + sum (x:xs)
+            = DEF bonus.2
+            x + 3 + bonus xs == 6 + 3*(len (x:xs)) + sum (x:xs)
+            = INDHYP l2r @ bonus
+            x + 3 + (6 + 3*(len xs) + sum xs) == 6 + 3*(len (x:xs)) + sum (x:xs)
+            = DEF len.2 @ len 2
+            x + 3 + (6 + 3*(len xs) + sum xs) == 6 + 3*(1 + len xs) + sum (x:xs)
+            = DEF sum.2 @ sum 2
+            x + 3 + (6 + 3*(len xs) + sum xs) == 6 + 3*(1 + len xs) + (x + sum xs)
+            = LAW mul_add_left_distr l2r @ * 2
+            x + 3 + (6 + 3*(len xs) + sum xs) == 6 + (3*1 + 3*len xs) + (x + sum xs)
+            = SIMP
+            x + 3 + (6 + 3*(len xs) + sum xs) == 6 + (3 + 3*len xs) + (x + sum xs)
+            = NORM +
+            3 + 6 + x + sum xs + 3*len(xs) ==  3 + 6 + x + sum xs + 3*len(xs)
+            = LAW eq_refl
+            True
+        END ReduceAll
+    END STEP
+END Induction
+QED ex5q3
